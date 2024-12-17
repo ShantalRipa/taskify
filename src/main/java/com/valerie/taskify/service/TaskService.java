@@ -3,6 +3,7 @@ package com.valerie.taskify.service;
 import com.valerie.taskify.entity.Task;
 import com.valerie.taskify.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +13,7 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
+    @Autowired
     public TaskService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
