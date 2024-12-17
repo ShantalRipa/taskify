@@ -1,47 +1,48 @@
 package com.valerie.taskify.service;
 
 import com.valerie.taskify.entity.Task;
+import com.valerie.taskify.repository.TaskRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class TaskService {
-    private final List<Task> tasks = new ArrayList<>();
-    private Long currentId = 1L;
 
-    // Create a new task
+    private final TaskRepository taskRepository;
+
+    @Autowired
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
     public Task createTask(Task task) {
-        task.setId(currentId++);
-        tasks.add(task);
-        return task;
+        return taskRepository.save(task);
     }
 
-    // Get all tasks
     public List<Task> getAllTasks() {
-        return tasks;
+        return taskRepository.findAll();
     }
 
-    // Get task by ID
     public Optional<Task> getTaskById(Long id) {
-        return tasks.stream().filter(task -> task.getId().equals(id)).findFirst();
+        return taskRepository.findById(id);
     }
 
-    // Update a task
     public Optional<Task> updateTask(Long id, Task updatedTask) {
-        return getTaskById(id).map(task -> {
+        return taskRepository.findById(id).map(task -> {
             task.setTitle(updatedTask.getTitle());
             task.setDescription(updatedTask.getDescription());
             task.setStatus(updatedTask.getStatus());
-            return task;
+            return taskRepository.save(task);
         });
     }
 
-    // Delete a task
     public boolean deleteTask(Long id) {
-        return tasks.removeIf(task -> task.getId().equals(id));
+        return taskRepository.findById(id).map(task -> {
+            taskRepository.delete(task);
+            return true;
+        }).orElse(false);
     }
 }
-
